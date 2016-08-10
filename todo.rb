@@ -29,12 +29,39 @@ get "/lists/new" do
   erb :new_list, layout: :layout
 end
 
-# Return an error message if the name is invalid. Otherwise we will return nil
+# Return an error message if the list name is invalid. Otherwise we will return nil
 def error_for_list_name(name)
   if !(1..100).cover? name.length
     'The list name must be between 1 and 100 characters'
   elsif session[:lists].any? { |list| list[:name] == name }
     'That list already exists!'
+  end
+end
+
+# Return an error message if the todo name is invalid
+def error_for_todo_name(name)
+  id = params[:list_id].to_i
+  if !(1..100).cover? name.length
+    'The list name must be between 1 and 100 characters'
+  elsif session[:lists][id][:todos].any? { |todo| todo[:name] == name }
+    'That list already exists!'
+  end
+end
+
+# Add a new todo to a list
+post "/lists/:list_id/todos" do
+  list_id = params[:list_id].to_i
+  @list = session[:lists][list_id]
+  name = params[:todo].strip
+
+  error = error_for_todo_name(name)
+  if error
+    session[:error] = error
+    redirect "/lists/#{list_id}"
+  else
+    @list[:todos] << { name: params[:todo], completed: false }
+    session[:success] = "Todo added."
+    redirect "/lists/#{list_id}"
   end
 end
 
