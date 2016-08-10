@@ -9,7 +9,10 @@
   </head>
   <body>
     <header>
-      <h1>Todo Tracker</h1>
+      <h1><a href="/">Todo Tracker</a></h1>
+      <div class="actions">
+        <%= yield_content :header_links %>
+      </div>
     </header>
 
     <% if session[:success] %>
@@ -23,7 +26,6 @@
         <p><%= session.delete(:error) %></p>
       </div>
     <% end %>
-    
     <main>
       <%= yield %>
     </main>
