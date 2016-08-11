@@ -120,9 +120,11 @@ end
 
 # Delete a todo from a list
 post '/lists/:list_id/todos/:todo_id/delete' do
-  list_id = params[:list_id].to_i
+  @list_id = params[:list_id].to_i
+  @list = session[:lists][@list_id]
+
   todo_id = params[:todo_id].to_i
-  session[:lists][list_id][:todos].delete_at(todo_id)
+  @list[:todos].delete_at(todo_id)
   session[:success] = 'The list has been deleted!'
-  redirect "/lists/#{params[:list_id]}"
+  redirect "/lists/#{@list_id}"
 end
