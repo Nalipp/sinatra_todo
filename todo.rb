@@ -18,6 +18,19 @@ get '/' do
   redirect '/lists'
 end
 
+helpers do
+  def all_todos_complete?(list_id)
+    @list = session[:lists][list_id]
+    @list[:todos].all? { |todo| todo[:completed] }  
+  end
+
+  def completed_todos_count(list_id)
+    @list_id = list_id.to_i
+    @list = session[:lists][@list_id]
+    @list[:todos].select { |todo| todo[:completed] == true }.count
+  end
+end
+
 # View all lists
 get "/lists" do
   @lists = session[:lists]
@@ -119,33 +132,34 @@ post '/lists/:id/delete' do
 end
 
 # Delete a todo from a list
-post '/lists/:list_id/todos/:todo_id/delete' do
+post '/lists/:list_id/todos/:id/delete' do
   @list_id = params[:list_id].to_i
   @list = session[:lists][@list_id]
 
-  todo_id = params[:todo_id].to_i
-  @list[:todos].delete_at(todo_id)
-  # session[:success] = 'The list has been deleted!'
+  id = params[:id].to_i
+  @list[:todos].delete_at(id)
+  session[:success] = 'The list has been deleted!'
   redirect "/lists/#{@list_id}"
 end
 
 #Update the status of a todo
-post "/lists/:list_id/todos/:todo_id" do
+post "/lists/:list_id/todos/:id" do
   @list_id = params[:list_id].to_i
   @list = session[:lists][@list_id]
 
-  todo_id = params[:todo_id].to_i
+  id = params[:id].to_i
   is_completed = params[:completed] == "true"
-  @list[:todos][todo_id][:completed] = is_completed
-  # session[:success] = 'The todo has been updated!'
+  @list[:todos][id][:completed] = is_completed
+  session[:success] = 'The todo has been updated!'
   redirect "/lists/#{@list_id}"
 end
 
-#Complete all todos
-post "/lists/:list_id/complete_all" do
-  @list_id = params[:list_id].to_i
+#Mark all todos as complete for a list
+post "/lists/:id/complete_all" do
+  @list_id = params[:id].to_i
   @list = session[:lists][@list_id]
 
+  session[:success] = 'All todos have been completed!'
   @list[:todos].each { |todo| todo[:completed] = true }
   redirect "/lists/#{@list_id}"
 end
