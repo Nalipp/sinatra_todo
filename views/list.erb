@@ -8,30 +8,20 @@
 
   <ul>
     <% @list[:todos].each_with_index do |todo, index| %>
-      <% boolean = session[:lists][@list_id][:todos][index][:completed] %>
-        <% if boolean == 'true' %>
-          <li class="complete">
-            <form action="/lists/<%= @list_id %>/todos/<%= index %>/completed/false" method="post" class="check">
-              <input type="hidden" name="completed" value="add_check" />
-              <button type="submit">Complete</button>
-            </form>
-            <h3><%= todo[:name] %></h3>
-            <form action="/lists/<%= @list_id %>/todos/<%= index %>/delete" method="post" class="delete">
-              <button type="submit">Delete</button>
-            </form>
-          </li>
-        <% else %>
+      <% if todo[:completed] %>
+        <li class="complete">
+      <% else %>
         <li>
-          <form action="/lists/<%= @list_id %>/todos/<%= index %>/completed/true" method="post" class="">
-            <input type="hidden" name="completed" value="add_check" />
-            <button type="submit">Complete</button>
-          </form>
-          <h3><%= todo[:name] %></h3>
-          <form action="/lists/<%= @list_id %>/todos/<%= index %>/delete" method="post" class="delete">
-            <button type="submit">Delete</button>
-          </form>
-        </li>
-        <% end %>
+      <% end %>
+        <form action="/lists/<%= @list_id %>/todos/<%= index %>" method="post" class="check">
+          <input type="hidden" name="completed" value="<%= !todo[:completed] %>" />
+          <button type="submit">Complete</button>
+        </form>
+        <h3><%= todo[:name] %></h3>
+        <form action="/lists/<%= @list_id %>/todos/<%= index %>/delete" method="post" class="delete">
+          <button type="submit">Delete</button>
+        </form>
+      </li>
     <% end %>
   </ul>
 </section>
