@@ -128,3 +128,12 @@ post '/lists/:list_id/todos/:todo_id/delete' do
   session[:success] = 'The list has been deleted!'
   redirect "/lists/#{@list_id}"
 end
+
+post "/lists/:list_id/todos/:todo_id/completed/:boolean" do
+  @list_id = params[:list_id].to_i
+  @list = session[:lists][@list_id]
+
+  todo_id = params[:todo_id].to_i
+  @list[:todos][todo_id][:completed] = params[:boolean]
+  redirect "/lists/#{@list_id}"
+end
