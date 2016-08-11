@@ -9,7 +9,12 @@
   <ul>
     <% @list[:todos].each_with_index do |todo, index| %>
       <h3>
-        <li><%= todo[:name] %></li>
+        <li>
+          <%= todo[:name] %>
+          <form action="/lists/<%= @list_id %>/todos/<%= index %>/delete" method="post" class="delete">
+            <button type="submit">Delete</button>
+          </form>
+        </li>
       </h3>
     <% end %>
   </ul>
